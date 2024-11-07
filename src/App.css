@@ -1,0 +1,23 @@
+#root {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    /*z-index: 1000;*/
+    height: 100vh;
+    width: 100vw;
+}
+
+/*子菜单item过多，被页面覆盖无法完全显示 临时解决方案
+https://github.com/ant-design/ant-design/issues/46903
+
+ant-design官方给的临时解决方案
+https://github.com/ant-design/ant-design/issues/47826
+*/
+.self_overflow {
+    max-height: 40vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
