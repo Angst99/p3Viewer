@@ -77,7 +77,7 @@ const App = () => {
     };
 
 
-    let items = [
+    const [items,setItems] =  useState([
         {
             key: '0',
             icon: <LineChartOutlined/>,
@@ -136,18 +136,24 @@ const App = () => {
             label: 'scan',
             icon: <AppstoreOutlined/>,
         },
-    ];
+    ]);
 
-    //动态生成子菜单
     const pushData = (rowNames) => {
+        let updatedItems = [...items];
         for (const rowName of rowNames) {
             let children = convertJsonFormat(rowName);
-            let targetObject = items.find(item => item.key === rowName);
-            if (targetObject) {
-                targetObject.children = [...targetObject.children, ...children];
+            let targetObjectIndex = updatedItems.findIndex(item => item.key === rowName);
+
+            if (targetObjectIndex!== -1) {
+                let updatedObject = {
+                    ...updatedItems[targetObjectIndex],
+                    children: [...updatedItems[targetObjectIndex].children,...children]
+                };
+                updatedItems[targetObjectIndex] = updatedObject;
             }
         }
-    }
+        setItems(updatedItems);
+    };
 
     const ChartSelectorComponent = ({chartLibrary, showSelectChart, IP}) => {
         let selectedComponent;
@@ -177,13 +183,11 @@ const App = () => {
     };
 
 
-    loadDataByPost();
-    pushData(['rowA', 'rowB', 'rowC', 'rowD', 'rowE', 'rowF'])
-
     useEffect(() => {
-        setTimeout(() => {
-            setRefreshKeySider((prevKey) => prevKey + 1);
-        }, 500);
+
+        loadDataByPost().then(() => {
+            pushData(['rowA', 'rowB', 'rowC', 'rowD', 'rowE', 'rowF'])
+        });
 
     }, [])
 
