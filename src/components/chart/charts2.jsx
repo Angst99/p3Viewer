@@ -152,7 +152,7 @@ const RealTimeChart = () => {
             // if (!value || value.includes('.')) {
             //     return [];
             // }
-            return ['172.20.10.', '172.20.9.'].map((domain) => ({
+            return ['172.20.22.', '172.20.9.'].map((domain) => ({
                 label: `${domain}${value}`,
                 value: `${domain}${value}`,
             }));

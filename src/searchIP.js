@@ -6,7 +6,7 @@ let jsonData1 = {};
 let data;
 const loadDataByPost = async () => {
     try {
-        const response = await fetch('http://127.0.0.1:3333/searchAllIP2', {
+        const response = await fetch('http://172.20.26.212:3333/searchAllIP2', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -41,6 +41,34 @@ const convertJsonFormat = (rowName, inputJson = data) => {
             children.push({
                 key: deviceKey,
                 label: deviceKey
+            });
+        }
+    }
+
+    return children;
+};
+
+const convertJsonFormat2 = (rowName, inputJson = data) => {
+    if (!inputJson) {
+        // console.warn('Data is null');
+        // inputJson = jsonData1;
+        return [];
+    }
+    let children = [];
+
+    for (let rowKey in inputJson) {
+        if (!rowKey.startsWith(rowName)) {
+            continue;
+        }
+        let rowData = inputJson[rowKey];
+
+        for (let device of rowData) {
+            let deviceKey = device.device_id.split('-')[0];
+            let deviceIP = device.IP;
+            children.push({
+                label: deviceKey,
+                value: deviceKey,
+                ip: deviceIP
             });
         }
     }
@@ -113,4 +141,4 @@ const handleSearchIPByAPI = async (devive_id) => {
 };
 
 
-export {findIpByDeviceId, loadDataByPost, convertJsonFormat}
+export {findIpByDeviceId, loadDataByPost, convertJsonFormat, convertJsonFormat2}

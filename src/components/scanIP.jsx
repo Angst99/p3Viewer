@@ -42,7 +42,7 @@ const ScanIP = () => {
     const scanIP = async () => {
         try {
             setIsDisabled(true);
-            const response = await axios.post('http://127.0.0.1:3333/scanIP');
+            const response = await axios.post('http://172.20.26.212:3333/scanIP');
             const data = response.data;
             console.log(data);
             setIsDisabled(true);
@@ -57,7 +57,7 @@ const ScanIP = () => {
     const [inputMessage, setInputMessage] = useState('');
 
     useEffect(() => {
-        const newSocket = new WebSocket('ws://localhost:8080'); // 这里替换为你的WebSocket服务器地址
+        const newSocket = new WebSocket('ws://172.20.26.212:8080'); // WebSocket地址
 
         newSocket.onopen = () => {
             console.log('ws连接已建立');

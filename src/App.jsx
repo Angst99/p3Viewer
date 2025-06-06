@@ -17,6 +17,7 @@ import {convertJsonFormat, findIpByDeviceId, loadDataByPost} from "./searchIP.js
 import axios from "axios";
 import {Charts, Charts2} from "./components/chart/charts.jsx";
 import ScanIP from "./components/scanIP.jsx";
+import {Vent} from "./components/vent.jsx";
 
 const {Header, Sider, Content, Footer} = Layout;
 const App = () => {
@@ -27,7 +28,6 @@ const App = () => {
 
     //刷新图表组件的key，用于刷新图表组件
     const [refreshKey, setRefreshKey] = useState(0);
-    const [refreshKeySider, setRefreshKeySider] = useState(0);
     const handleRefresh = () => {
         setRefreshKey((prevKey) => prevKey + 1);
     };
@@ -49,6 +49,9 @@ const App = () => {
             return;
         } else if (key === 'scan') {
             setShowSelectChart('scan');
+            return;
+        } else if (key === 'vent') {
+            setShowSelectChart('vent');
             return;
         }
         setShowSelectChart(key);
@@ -72,12 +75,13 @@ const App = () => {
         insetInlineStart: 0,
         top: 0,
         bottom: 0,
-        scrollbarWidth: 'thin',
+        scrollbarWidth: 'none',
+        // scrollbarWidth: 'thin',
         scrollbarGutter: 'auto',
     };
 
 
-    const [items,setItems] =  useState([
+    const [items, setItems] = useState([
         {
             key: '0',
             icon: <LineChartOutlined/>,
@@ -136,18 +140,26 @@ const App = () => {
             label: 'scan',
             icon: <AppstoreOutlined/>,
         },
+        {
+            key: 'vent',
+            label: '通气',
+            icon: <AppstoreOutlined/>,
+        },
     ]);
 
     const pushData = (rowNames) => {
+        if (items.find(item => item.key === 'rowA').children.length !== 0) {
+            return;//只允许设置items一次，避免重复展开items导致多此设置 测试时出现，正常应该不会
+        }
         let updatedItems = [...items];
         for (const rowName of rowNames) {
             let children = convertJsonFormat(rowName);
             let targetObjectIndex = updatedItems.findIndex(item => item.key === rowName);
 
-            if (targetObjectIndex!== -1) {
+            if (targetObjectIndex !== -1) {
                 let updatedObject = {
                     ...updatedItems[targetObjectIndex],
-                    children: [...updatedItems[targetObjectIndex].children,...children]
+                    children: [...updatedItems[targetObjectIndex].children, ...children]
                 };
                 updatedItems[targetObjectIndex] = updatedObject;
             }
@@ -172,6 +184,8 @@ const App = () => {
             }
         } else if (showSelectChart === 'scan') {
             selectedComponent = <ScanIP/>
+        } else if (showSelectChart === 'vent') {
+            selectedComponent = <Vent/>
         } else {
             if (chartLibrary === "ECharts") {
                 selectedComponent = <Echarts2 ip={IP}/>;
@@ -198,8 +212,6 @@ const App = () => {
             }}
         >
             <Sider
-                key={refreshKeySider}
-
                 collapsed={collapsed}
                 onCollapse={(value) => setCollapsed(value)}
                 style={siderStyle}>
@@ -209,7 +221,7 @@ const App = () => {
 
                 <Menu
                     defaultSelectedKeys={['1']}
-                    defaultOpenKeys={['sub1']}
+                    // defaultOpenKeys={['sub1']}
                     mode="inline"
                     theme="dark"
                     // inlineCollapsed={collapsed}  //浏览器报警告 应该控制sider的折叠 不是菜单，
@@ -220,6 +232,7 @@ const App = () => {
             <Layout>
                 <Header
                     style={{
+                        maxHeight: '10vh',
                         padding: 0,
                         background: colorBgContainer,
                         display: 'flex',
@@ -304,9 +317,10 @@ const App = () => {
                 <Content
                     key={refreshKey}
                     style={{
-                        margin: '24px 16px',
-                        padding: 20,
+                        margin: '2vh 16px',
+                        padding: 5,
                         minHeight: 280,
+                        maxHeight: '80vh',
                         height: '100%',
                         overflow: 'auto',
                         background: colorBgContainer,
@@ -316,17 +330,34 @@ const App = () => {
                     <div>
                         {/*切换Content的临时方法，后续改路由*/}
 
-                        <ChartSelectorComponent
-                            chartLibrary={chartLibrary}
-                            showSelectChart={showSelectChart}
-                            IP={IP}
-                        />
+                        {/*<ChartSelectorComponent*/}
+                        {/*    chartLibrary={chartLibrary}*/}
+                        {/*    showSelectChart={showSelectChart}*/}
+                        {/*    IP={IP}*/}
+                        {/*/>*/}
 
+                        {showSelectChart === '0'
+                            ? (chartLibrary === "ECharts"
+                                ? <RealTimeChart2/>
+                                : (chartLibrary === "BizCharts" ? <RealTimeChart/> : null))
+                            : (showSelectChart === '1'
+                                ? (chartLibrary === "ECharts"
+                                    ? <Echarts1/>
+                                    : (chartLibrary === "BizCharts" ? <Charts2/> : null))
+                                : (showSelectChart === 'scan'
+                                    ? <ScanIP/>
+                                    : (showSelectChart ==='vent'
+                                       ? <Vent/>
+                                    : (chartLibrary === "ECharts"
+                                        ? <Echarts2 ip={IP}/>
+                                        : (chartLibrary === "BizCharts" ? <Charts ip={IP}/> : null)))))
+                        }
                     </div>
 
                 </Content>
                 <Footer
                     style={{
+                        maxHeight: '5vh',
                         textAlign: 'center',
                     }}
                 >

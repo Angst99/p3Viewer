@@ -242,13 +242,13 @@ const RealTimeChart2 = () => {
             if (!value) {
                 return [];
             }
-            if (value.includes('172.20.10.')) {
-                return ['172.20.10.'].map(() => ({
+            if (value.includes('172.20.22.')) {
+                return ['172.20.22.'].map(() => ({
                     label: `${value}`,
                     value: `${value}`,
                 }));
             }
-            return ['172.20.10.', '172.20.9.'].map((domain) => ({
+            return ['172.20.22.', '172.20.9.'].map((domain) => ({
                 label: `${domain}${value}`,
                 value: `${domain}${value}`,
             }));
